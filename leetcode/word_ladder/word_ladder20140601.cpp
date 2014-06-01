@@ -14,34 +14,53 @@ class Solution {
        if (start == end) return 1;
 
 	   map<string, bool> isVisitedMap; 
+       map<string, vector<string> > str_vec_map;
 
        for (dict_iter_t iter = dict.begin(); iter != dict.end(); iter++) {
                isVisitedMap[*iter] = false;
+               vector<string> temp;
+               for (dict_iter_t iter1 = dict.begin(); iter1 != dict.end(); iter1++) {
+                       if (compare_str(*iter1, *iter) == 1) {
+                               temp.push_back(*iter1);
+                       }
+               }
+
+               str_vec_map[*iter] = temp;
        }
+        
+      vector<string> temp_vec;
+      for (dict_iter_t iter1 = dict.begin(); iter1 != dict.end(); iter1++) {
+          if (compare_str(*iter1, start) == 1) {
+                  temp_vec.push_back(*iter1);
+          }
+       }
+
+       str_vec_map[start] = temp_vec;
        
 //       vector<vector<string> > data;
        vector<string> temp;
        temp.push_back(start);
 
        int min_path_len = INT_MAX;
-       populate(dict, start, end, temp, isVisitedMap, min_path_len);
+       populate(dict, start, end, temp, isVisitedMap, min_path_len, str_vec_map);
 
        return min_path_len == INT_MAX ? 0 : min_path_len;
   }
 
     private:
-        void populate(unordered_set<string> &dict, string &start, string &end, vector<string> &temp, map<string, bool> &isVisitedMap, int &max_path_len) {
+        void populate(unordered_set<string> &dict, string &start, string &end, vector<string> &temp, map<string, bool> &isVisitedMap, int &max_path_len, map<string, vector<string> > &str_vec_map) {
                 if (compare_str(temp.back(), end) == 1) {
                     temp.push_back(end);
                     if (temp.size() < max_path_len) max_path_len = temp.size();
                     return;
                 }
 
-                for(dict_iter_t iter = dict.begin(); iter != dict.end(); iter++) {
+                vector<string> &str_map_vec = str_vec_map[temp.back()]; 
+                for(vector<string>::iterator iter = str_map_vec.begin(); iter != str_map_vec.end(); iter++) {
                       if (isVisitedMap[*iter] == false && compare_str(*iter, temp.back()) == 1) {
                               temp.push_back(*iter);
                               isVisitedMap[*iter] = true;
-                              populate(dict, start, end, temp, isVisitedMap,  max_path_len);
+                              populate(dict, start, end, temp, isVisitedMap,  max_path_len, str_vec_map);
                               temp.pop_back();
                               isVisitedMap[*iter] = false;
                       }
