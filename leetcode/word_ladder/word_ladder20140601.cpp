@@ -19,31 +19,21 @@ class Solution {
                isVisitedMap[*iter] = false;
        }
        
-       vector<vector<string> > data;
+//       vector<vector<string> > data;
        vector<string> temp;
        temp.push_back(start);
 
-       populate(data, dict, start, end, temp, isVisitedMap);
-
-       //cout << "size(data)=" << data.size() << endl;
-       
        int min_path_len = INT_MAX;
-       if (data.size() != 0) {
-            for (int i=0; i<data.size(); i++) {
-                if (data[i].size() < min_path_len) {
-                     min_path_len = data[i].size();
-                }
-            }
-       }
+       populate(dict, start, end, temp, isVisitedMap, min_path_len);
 
        return min_path_len == INT_MAX ? 0 : min_path_len;
   }
 
     private:
-        void populate(vector<vector<string> > &data, unordered_set<string> &dict, string &start, string &end, vector<string> &temp, map<string, bool> &isVisitedMap) {
+        void populate(unordered_set<string> &dict, string &start, string &end, vector<string> &temp, map<string, bool> &isVisitedMap, int &max_path_len) {
                 if (compare_str(temp.back(), end) == 1) {
                     temp.push_back(end);
-                    data.push_back(temp);
+                    if (temp.size() < max_path_len) max_path_len = temp.size();
                     return;
                 }
 
@@ -51,7 +41,7 @@ class Solution {
                       if (isVisitedMap[*iter] == false && compare_str(*iter, temp.back()) == 1) {
                               temp.push_back(*iter);
                               isVisitedMap[*iter] = true;
-                              populate(data, dict, start, end, temp, isVisitedMap);
+                              populate(dict, start, end, temp, isVisitedMap,  max_path_len);
                               temp.pop_back();
                               isVisitedMap[*iter] = false;
                       }
