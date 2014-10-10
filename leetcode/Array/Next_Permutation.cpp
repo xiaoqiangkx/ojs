@@ -1,36 +1,36 @@
 class Solution {
 public:
     void nextPermutation(vector<int> &num) {
+        int st = -1;
         int len = num.size();
-        int pos = -1;
-        for (int i = len - 1; i > 0; --i) {
-            if (num[i-1] < num[i]) {
-                pos = i - 1;
+        
+        for (int i = len - 2; i >= 0; --i) {
+            if (num[i] < num[i + 1]) {
+                st = i;
                 break;
             }
         }
         
-        if (pos == -1) {
-            for (int i = 0; i < len / 2; ++i) {
-                swap(num, i, len - 1 - i);
-            }
-        } else {
-            for (int i = pos + 1; i < len; ++i) {
-                if (i == len - 1 || num[i + 1] <= num[pos]) {
-                    swap(num, pos, i);
-                    break;
+        if (st != -1) {
+            int last = st + 1;
+            for (int i = st + 2; i < len; i++) {
+                if (num[i] > num[st]) {
+                    last = i;
                 }
             }
             
-            for (int i = pos + 1; i < pos + 1 + (len - 1 - pos) / 2; ++i) {
-                swap(num, i, pos + 1 + len - 1 - i);
-            }
+            swap(num[st], num[last]);
+            reverse(num, st + 1, len - 1);
+        } else {
+            reverse(num, 0, len - 1);
         }
     }
     
-    void swap(vector<int> &num, int i, int j) {
-        int tmp = num[i];
-        num[i] = num[j];
-        num[j] = tmp;
+    void reverse(vector<int> &num, int st, int ed) {
+        while (st < ed) {
+            swap(num[st], num[ed]);
+            ++st;
+            --ed;
+        }
     }
 };
